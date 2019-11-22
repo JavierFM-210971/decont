@@ -21,8 +21,13 @@ done
 echo "Running cutadapt..."
 mkdir -p log/cutadapt
 mkdir -p out/trimmed
-cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed -o out/trimmed/C57BL_6NJ.trimmed.fastq.gz C57BL_6NJ.fastq.gz > log/cutadapt/C57BL_6NJ.log
-cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed -o out/trimmed/SPRET_EiJ.trimmed.fastq.gz SPRET_EiJ.fastq.gz > log/cutadapt/SPRET_EiJ.log
+
+for fname in $(out/merged/*.fastq.gz)
+do
+	sid=$(ls fname | cut -d "_" -f1 | sed 's:data/::' | sort | uniq)
+	cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed -o out/cutadapt/${sid}.trimmed.fastq.gz out/merged/${sid}.fastq.gz > log/cutadapt
+done
+
 echo
 
 
@@ -36,7 +41,10 @@ mkdir -p out/star/${sampleid}
 for fname in out/trimmed/*.fastq.gz
 do
     # you will need to obtain the sample ID from the filename
-    sid=#TODO
+if [ "$#" -eq 1 ]
+then
+    sampleid=$1    
+sid=#TODO
     mkdir -p out/star/$sid
     STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sampleid_1.trimmed.fastq.gz out/trimmed/${sampleid_2.trimmed.fastq.gz --readFilesCommand zcat --outFileNamePrefix out/star/${sampleid}
 done 
