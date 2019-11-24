@@ -25,7 +25,7 @@ mkdir -p out/trimmed
 for fname in $(out/merged/*.fastq.gz)
 do
 	sid=$(ls fname | cut -d "_" -f1 | sed 's:data/::' | sort | uniq)
-	cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed -o out/cutadapt/${sid}.trimmed.fastq.gz out/merged/${sid}.fastq.gz > log/cutadapt
+	cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed -o out/trimmed/${sid}.trimmed.fastq.gz out/merged/${sid}.fastq.gz > log/cutadapt
 done
 
 echo
@@ -38,9 +38,12 @@ mkdir -p out/star/${sampleid}
 
 
 
-for fname in out/trimmed/*.fastq.gz
+for fname in "out/trimmed/"*.fastq.gz
 do
     # you will need to obtain the sample ID from the filename
+filename=$(basename -- "$fname")
+filename="${filename%.*.*}"
+echo $filename
 if [ "$#" -eq 1 ]
 then
     sampleid=$1    
