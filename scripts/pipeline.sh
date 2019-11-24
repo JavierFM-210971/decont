@@ -38,7 +38,7 @@ for fname in out/trimmed/*.fastq.gz
 do
         sid=$(echo $fname | sed 's:out/trimmed/::' | sed 's:.fastq.gz::' | sort | uniq)
 	mkdir -p out/star/$sid
-	STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sid}.fastq.gz --readFilesCommand zcat --outFileNamePrefix out/star/${sid}
+	STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sid}.*.gz --readFilesCommand zcat --outFileNamePrefix out/star/${sid}
 done
 
 
@@ -47,26 +47,14 @@ for fname in out/trimmed/*.fastq.gz
 do
 	sid=$(echo $fname | sed 's:out/trimmed/::' | sed 's:.trimmed.fastq.gz::' | sort | uniq)
 	echo $sid >> log/pipeline.log 
-	cat log/cutadapt/$sid.log | grep "Reads with adapters" >> log/pipeline.log 
+	cat log/cutadapt/$sid.log | grep "Reads with adapters" >> log/pipeline.log
 	cat log/cutadapt/$sid.log | grep "Total basepairs processed" >> log/pipeline.log
-	cat out/star/$sid/Log.final.out | grep "Uniquely mapped reads %" >> log/pipeline.log 
-	cat out/star/$sid/Log.final.out | grep "% of reads mapped to multiple loci" >> log/pipeline.log 
-	cat out/star/$sid/Log.final.out | grep "% of reads mapped to too many loci" >> log/pipeline.log 
+	cat out/star/$sid/Log.final.out | grep "Uniquely mapped reads %" >> log/pipeline.log
+	cat out/star/$sid/Log.final.out | grep "% of reads mapped to multiple loci" >> log/pipeline.log
+	cat out/star/$sid/Log.final.out | grep "% of reads mapped to too many loci" >> log/pipeline.log
+done
 
-	
 
-
-    # you will need to obtain the sample ID from the filename
-#filename=$(basename -- "$fname")
-#filename="${filename%.*.*}"
-#echo $filename
-#if [ "$#" -eq 1 ]
-#then
-    #sampleid=$1    
-#sid=#TODO
-    #mkdir -p out/star/$sid
-    #STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sampleid_1.trimmed.fastq.gz out/trimmed/${sampleid_2.trimmed.fastq.gz --readFilesCommand zcat --outFileNamePrefix out/star/${sampleid}
-#done 
 
 # TODO: create a log file containing information from cutadapt and star logs
 # (this should be a single log file, and information should be *appended* to it on each run)
