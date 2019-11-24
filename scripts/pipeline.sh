@@ -38,7 +38,7 @@ for fname in out/trimmed/*.fastq.gz
 do
         sid=$(echo $fname | sed 's:out/trimmed/::' | sed 's:.fastq.gz::' | sort | uniq)
 	mkdir -p out/star/$sid
-	STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sid}.*.gz --readFilesCommand zcat --outFileNamePrefix out/star/${sid}
+	STAR --runThreadN 4 --genomeDir res/contaminants_idx --outReadsUnmapped Fastx --readFilesIn out/trimmed/${sid}.*.gz --readFilesCommand zcat --outFileNamePrefix out/star/$sid/
 done
 
 
@@ -49,9 +49,9 @@ do
 	echo $sid >> log/pipeline.log 
 	cat log/cutadapt/$sid | grep "Reads with adapters" >> log/pipeline.log
 	cat log/cutadapt/$sid | grep "Total basepairs processed" >> log/pipeline.log
-	cat out/star/$sid.trimmedLog.final.out | grep "Uniquely mapped reads %" >> log/pipeline.log
-	cat out/star/$sid.trimmedLog.final.out | grep "% of reads mapped to multiple loci" >> log/pipeline.log
-	cat out/star/$sid.trimmedLog.final.out | grep "% of reads mapped to too many loci" >> log/pipeline.log
+	cat out/star/$sid.trimmed/Log.final.out | grep "Uniquely mapped reads %" >> log/pipeline.log
+	cat out/star/$sid.trimmed/Log.final.out | grep "% of reads mapped to multiple loci" >> log/pipeline.log
+	cat out/star/$sid.trimmed/Log.final.out | grep "% of reads mapped to too many loci" >> log/pipeline.log
 done
 
 
